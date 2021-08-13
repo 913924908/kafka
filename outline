@@ -1,0 +1,61 @@
+类比
+  broker-database
+  topic-table
+  partition-partition
+mq的两种模式
+  1:1
+    一个msg只能给一个consumer
+  1:n
+    mq主动推送msg
+    consumer主动拉取msg
+      consumer要不断轮询mq看有没有msg
+kafka基础架构
+  producer
+  kafka cluster
+    broker0
+      topic0-区分不同的msg
+        partition0
+  zk cluster
+  consumer
+    consumer group0
+      partition0的msg只能被consumer group0的一个consumer消费
+搭建kafka集群 
+  #install
+  rz
+  cd /software
+  tar -zxvf kafka.tgz -C /server
+  cd /server/kafka
+  #config
+  vim server.properties
+    broker.id=0
+    /log.dirs #find
+    log.dirs=/server/kafka/data
+  cd server
+  scp -r kafka node2.itcast.cn:$PWD
+  scp -r kafka node3.itcast.cn:$PWD
+  将node2和node3的配置文件的broker.id修改即可
+  #env
+  vim /etc/profile
+  export KAFKA_HOME=/server/kafka
+  export PATH=:$PATH:${KAFKA_HOME}
+  scp /etc/profile node2.itcast.cn:$PWD
+  scp /etc/profile node3.itcast.cn:$PWD
+  source /ect/profile
+  #start
+  cd /server/zk
+  nohup bin/zookeeper-server-start.sh config/zookeeper.properties &
+  ./start-zk.sh #启动一堆zk服务
+  jps #QuorumPeerMain
+  bin/zkServer.sh status #Mode:follower 
+  cd /server/kafka
+  nohup bin/kafka-server-start.sh config/server.properties & #通过server.properties启动 每个node都执行
+  jps #kafka
+  bin/kafka-topics.sh --bootstrap-server node1.itcast.cn:9092 --list #测试集群是否启动成功
+demo
+  bin/kafka-topics.sh 
+  
+  
+  
+  
+  
+  
